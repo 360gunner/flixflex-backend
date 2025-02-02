@@ -18,6 +18,13 @@ export class UsersController {
     return this.usersService.findOne(username);
   }
 
+  @Get(':userId/favorites')
+  @UseGuards(JwtAuthGuard)
+  async getFavorites(@Param('userId') userId: string): Promise<string[]> {
+    const user = await this.usersService.findOne(userId);
+    return user?.favorites ?? [];
+  }
+
   @Put(':userId/favorites/:movieId')
   @UseGuards(JwtAuthGuard)
   async addFavorite(
