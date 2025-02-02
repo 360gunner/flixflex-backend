@@ -1,30 +1,25 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { Movie } from './schemas/movie.schema';
+import { TmdbService } from '../tmdb/tmdb.service';
+import { ContentType } from '../types/types';
 
 @Injectable()
 export class MoviesService {
-  constructor(@InjectModel('Movie') private movieModel: Model<Movie>) {}
+  constructor(private readonly tmdbService: TmdbService) {}
 
-  async findAll(page: number = 1): Promise<Movie[]> {
-    const limit = 10;
-    const skip = (page - 1) * limit;
-    return this.movieModel.find().skip(skip).limit(limit).exec();
+  async findAll(page: number = 1, type: ContentType = ContentType.Movie) {
+    return this.tmdbService.fetchMoviesWithPagination(page, type);
   }
 
-  async findOne(id: string): Promise<Movie | null> {
-    return this.movieModel.findById(id).exec();
+  async findOne(id: string, type: ContentType = ContentType.Movie) {
+    return this.tmdbService.fetchMovieDetails(id, type);
   }
 
-  async create(movie: Movie): Promise<Movie> {
-    const newMovie = new this.movieModel(movie);
-    return newMovie.save();
+  async search(query: string, type?: ContentType) {
+    return this.tmdbService.generalSearch(query, type);
   }
 
-  async search(query: string): Promise<Movie[]> {
-    return this.movieModel
-      .find({ title: { $regex: query, $options: 'i' } })
-      .exec();
+  async getTrailer(id: string, type: ContentType = ContentType.Movie) {
+    const trailerUrl = await this.tmdbService.fetchMovieTrailer(id, type);
+    return { url: trailerUrl };
   }
 }
