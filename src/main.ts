@@ -7,12 +7,11 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('FlixFlex API')
-    .setDescription('The FlixFlex API description')
+    .setDescription('The FlixFlex API for managing movies and user favorites')
     .setVersion('1.0')
-    .addTag('movies')
-    .addTag('users')
-    .addTag('auth')
+    .addBearerAuth() 
     .build();
+
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
