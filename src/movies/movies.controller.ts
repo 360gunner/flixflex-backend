@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, UseGuards, Query } from '@nestjs/common';
 import { MoviesService } from './movies.service';
 import { Movie } from './schemas/movie.schema';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -9,8 +9,8 @@ export class MoviesController {
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  async findAll(): Promise<Movie[]> {
-    return this.moviesService.findAll();
+  async findAll(@Query('page') page: number = 1): Promise<Movie[]> {
+    return this.moviesService.findAll(page);
   }
 
   @Get(':id')

@@ -7,8 +7,10 @@ import { Movie } from './schemas/movie.schema';
 export class MoviesService {
   constructor(@InjectModel('Movie') private movieModel: Model<Movie>) {}
 
-  async findAll(): Promise<Movie[]> {
-    return this.movieModel.find().exec();
+  async findAll(page: number = 1): Promise<Movie[]> {
+    const limit = 10;
+    const skip = (page - 1) * limit;
+    return this.movieModel.find().skip(skip).limit(limit).exec();
   }
 
   async findOne(id: string): Promise<Movie | null> {
