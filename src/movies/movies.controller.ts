@@ -25,6 +25,13 @@ export class MoviesController {
     return this.moviesService.findOne(id);
   }
 
+  @Get(':id/trailer')
+  @UseGuards(JwtAuthGuard)
+  async getTrailer(@Param('id') id: string): Promise<{ trailerUrl: string }> {
+    const movie = await this.moviesService.findOne(id);
+    return { trailerUrl: movie?.trailerUrl ?? "" };
+  }
+
   @Post()
   @UseGuards(JwtAuthGuard)
   async create(@Body() movie: Movie): Promise<Movie> {
