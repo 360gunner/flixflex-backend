@@ -13,6 +13,12 @@ export class MoviesController {
     return this.moviesService.findAll(page);
   }
 
+  @Get('search')
+  @UseGuards(JwtAuthGuard)
+  async search(@Query('query') query: string): Promise<Movie[]> {
+    return this.moviesService.search(query);
+  }
+
   @Get(':id')
   @UseGuards(JwtAuthGuard)
   async findOne(@Param('id') id: string): Promise<Movie | null> {

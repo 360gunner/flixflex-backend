@@ -21,4 +21,10 @@ export class MoviesService {
     const newMovie = new this.movieModel(movie);
     return newMovie.save();
   }
+
+  async search(query: string): Promise<Movie[]> {
+    return this.movieModel
+      .find({ title: { $regex: query, $options: 'i' } })
+      .exec();
+  }
 }
