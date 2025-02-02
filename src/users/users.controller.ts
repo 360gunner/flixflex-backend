@@ -1,6 +1,7 @@
-import { Controller, Post, Body, Get, Param, Put, Delete } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Put, Delete, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from './schemas/user.schema';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Controller('users')
 export class UsersController {
@@ -12,11 +13,13 @@ export class UsersController {
   }
 
   @Get(':username')
+  @UseGuards(JwtAuthGuard)
   async findOne(@Param('username') username: string): Promise<User | null> {
     return this.usersService.findOne(username);
   }
 
   @Put(':userId/favorites/:movieId')
+  @UseGuards(JwtAuthGuard)
   async addFavorite(
     @Param('userId') userId: string,
     @Param('movieId') movieId: string,
@@ -25,6 +28,7 @@ export class UsersController {
   }
 
   @Delete(':userId/favorites/:movieId')
+  @UseGuards(JwtAuthGuard)
   async removeFavorite(
     @Param('userId') userId: string,
     @Param('movieId') movieId: string,
