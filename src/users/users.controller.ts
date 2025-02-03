@@ -3,10 +3,11 @@ import {
   Post,
   Body,
   Get,
-  Param,
   Put,
   Delete,
   UseGuards,
+  Request,
+  Param,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -15,8 +16,8 @@ import {
   ApiOperation,
   ApiResponse,
   ApiTags,
-  ApiParam,
   ApiBody,
+  ApiParam,
 } from '@nestjs/swagger';
 import { CreateUserDto } from './dto/create-user.dto';
 
@@ -34,56 +35,33 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
-  @Get(':username')
+  @Get('favorites')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get user details by username' })
-  @ApiParam({ name: 'username', description: 'The username of the user' })
-  @ApiResponse({ status: 200, description: 'User details' })
-  @ApiResponse({ status: 404, description: 'User not found' })
-  async findOne(@Param('username') username: string) {
-    return this.usersService.findOne(username);
-  }
-
-  @Get(':userId/favorites')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get user favorites' })
-  @ApiParam({ name: 'userId', description: 'The ID of the user' })
+  @ApiOperation({ summary: 'Get favorites for the logged-in user' })
   @ApiResponse({ status: 200, description: 'List of favorite movies/series' })
-  @ApiResponse({ status: 404, description: 'User not found' })
-  async getFavorites(@Param('userId') userId: string) {
-    const user = await this.usersService.findOne(userId);
-    return user?.favorites ?? [];
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  async getFavorites(@Request() req) {
+    return this.usersService.getFavorites(req.user.userId);
   }
 
-  @Put(':userId/favorites/:movieId')
+  @Put('favorites/:movieId')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Add a movie/series to favorites' })
-  @ApiParam({ name: 'userId', description: 'The ID of the user' })
-  @ApiParam({ name: 'movieId', description: 'The ID of the movie/series' })
+  @ApiOperation({ summary: 'Add a movie/series to favorites for the logged-in user' })
   @ApiResponse({ status: 200, description: 'Movie/series added to favorites' })
-  @ApiResponse({ status: 404, description: 'User or movie/series not found' })
-  async addFavorite(
-    @Param('userId') userId: string,
-    @Param('movieId') movieId: string,
-  ) {
-    return this.usersService.addFavorite(userId, movieId);
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  async addFavorite(@Request() req, @Param('movieId') movieId: string) {
+    return this.usersService.addFavorite(req.user.userId, movieId);
   }
 
-  @Delete(':userId/favorites/:movieId')
+  @Delete('favorites/:movieId')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Remove a movie/series from favorites' })
-  @ApiParam({ name: 'userId', description: 'The ID of the user' })
-  @ApiParam({ name: 'movieId', description: 'The ID of the movie/series' })
+  @ApiOperation({ summary: 'Remove a movie/series from favorites for the logged-in user' })
   @ApiResponse({ status: 200, description: 'Movie/series removed from favorites' })
-  @ApiResponse({ status: 404, description: 'User or movie/series not found' })
-  async removeFavorite(
-    @Param('userId') userId: string,
-    @Param('movieId') movieId: string,
-  ) {
-    return this.usersService.removeFavorite(userId, movieId);
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  async removeFavorite(@Request() req, @Param('movieId') movieId: string) {
+    return this.usersService.removeFavorite(req.user.userId, movieId);
   }
 }

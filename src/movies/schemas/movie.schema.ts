@@ -1,15 +1,21 @@
 import { Schema, Document } from 'mongoose';
 
 export const MovieSchema = new Schema({
-  title: { type: String, required: true },
-  description: { type: String, required: true },
-  releaseDate: { type: Date, required: true },
-  trailerUrl: { type: String, required: true },
+  apiId: { type: String, unique: true },
+  title: { type: String },
+  description: { type: String },
+  releaseDate: { type: Date },
+  trailerUrl: { type: String },
+  trailer: { type: String },
+  details: { type: Object },
 });
 
-export interface Movie extends Document {
-  title: string;
-  description: string;
-  releaseDate: Date;
-  trailerUrl: string;
+export class Movie extends Document {
+  apiId?: string;
+  title?: string;
+  description?: string;
+  releaseDate?: Date;
+  trailerUrl?: string;
+  trailer?: string;
+  details?: any;
 }
