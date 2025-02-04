@@ -7,7 +7,7 @@ FlixFlex is a backend service designed to offer an extensive catalog of movies a
 
 I have documented all the endpoints using Swagger, which provides a clear and interactive interface for exploring the available endpoints. You can test the API directly through the Swagger UI:
 
-- **Swagger API Documentation:** `/api-docs`
+- **Swagger API Documentation:** `/api`
 
 ## Features
 
